@@ -1,0 +1,129 @@
+-- Services
+local UserInputService = game:GetService("UserInputService")
+local TweenService = game:GetService("TweenService")
+local RunService = game:GetService("RunService")
+local LocalPlayer = game:GetService("Players").LocalPlayer
+local Lighting = game:GetService("Lighting") -- For BlurEffect
+
+-- Create ScreenGui
+local screenGui = Instance.new("ScreenGui")
+screenGui.Name = "NotificationGui"
+screenGui.Parent = LocalPlayer:WaitForChild("PlayerGui")
+
+-- Function to create a notification
+local function createNotification(message, duration, imageUrl)
+    -- Create Notification Frame
+    local notificationFrame = Instance.new("Frame")
+    notificationFrame.Size = UDim2.new(0.3, 0, 0.1, 0)  -- Default size for mobile
+    notificationFrame.Position = UDim2.new(0.5, 0, 1, 0)  -- Positioned at the bottom
+    notificationFrame.BorderSizePixel = 0
+    notificationFrame.AnchorPoint = Vector2.new(0.5, 0.5)
+    notificationFrame.Parent = screenGui
+
+    -- Create UIListLayout to handle child layout
+    local uiListLayout = Instance.new("UIListLayout")
+    uiListLayout.Parent = notificationFrame
+    uiListLayout.Padding = UDim.new(0, 5)  -- Spacing between elements
+
+    -- Create Text Label
+    local textLabel = Instance.new("TextLabel")
+    textLabel.Size = UDim2.new(1, 0, 1, 0)  -- Fill the frame
+    textLabel.BackgroundTransparency = 1
+    textLabel.TextColor3 = Color3.fromRGB(255, 255, 255)  -- White text
+    textLabel.TextScaled = true  -- Scale text to fit
+    textLabel.Text = message .. " - " .. LocalPlayer.Name  -- Append player's name
+    textLabel.TextWrapped = true  -- Allow text to wrap within the label
+    textLabel.Parent = notificationFrame
+
+    -- Create Image Label
+    local imageLabel = Instance.new("ImageLabel")
+    imageLabel.Size = UDim2.new(0.1, 0, 0.1, 0)  -- Size of the image
+    imageLabel.Position = UDim2.new(0, 5, 0, 0)  -- Positioning on the left
+    imageLabel.BackgroundTransparency = 1
+    imageLabel.Image = imageUrl  -- Set image URL
+    imageLabel.Parent = notificationFrame
+
+    -- Rounded Corners for notification frame
+    local corner = Instance.new("UICorner")
+    corner.CornerRadius = UDim.new(0, 12)  -- Set radius for rounded corners
+    corner.Parent = notificationFrame
+
+    -- Set all notifications to a gray background
+    notificationFrame.BackgroundColor3 = Color3.fromRGB(100, 100, 100)  -- Gray background
+
+    -- Create Blur Effect
+    local blurEffect = Instance.new("BlurEffect")
+    blurEffect.Size = 0 -- Initial size is 0
+    blurEffect.Parent = Lighting -- Attach to Lighting for global effect
+
+    -- Tween function to show the notification
+    local function showNotification()
+        -- Adjust size based on device type
+        if UserInputService.TouchEnabled then
+            notificationFrame.Size = UDim2.new(0.8, 0, 0.15, 0)  -- Larger for mobile
+            notificationFrame.Position = UDim2.new(0.5, 0, 1, 0)  -- Adjust position for mobile
+        else
+            notificationFrame.Size = UDim2.new(0.4, 0, 0.1, 0)  -- Smaller for PC
+            notificationFrame.Position = UDim2.new(0.5, 0, 0.9, 0)  -- Centered at the bottom for PC
+        end
+
+        -- Set blur effect size
+        blurEffect.Size = 10  -- Set a size for the blur effect
+
+        -- Tween In effect for appearing notification
+        local tweenIn = TweenService:Create(notificationFrame, TweenInfo.new(0.5, Enum.EasingStyle.Back, Enum.EasingDirection.Out), {Position = UDim2.new(0.5, 0, 0.9, 0), BackgroundTransparency = 0.5})
+        tweenIn:Play()
+        tweenIn.Completed:Wait()  -- Wait for the tween to complete
+
+        -- Pause for the specified duration
+        wait(duration)
+
+        -- Tween Out effect for disappearing notification
+        local tweenOut = TweenService:Create(notificationFrame, TweenInfo.new(0.5, Enum.EasingStyle.Back, Enum.EasingDirection.Out), {Position = UDim2.new(0.5, 0, 1.1, 0), BackgroundTransparency = 1})
+        tweenOut:Play()
+        tweenOut.Completed:Wait()  -- Wait for the tween to complete
+        
+        -- Reset the blur effect size after notification is done
+        blurEffect.Size = 0
+        notificationFrame:Destroy()  -- Remove the notification frame
+    end
+
+    -- Show the notification
+    showNotification()
+end
+
+-- Function to display multiple notifications
+local function displayNotifications(messages, durations, images)
+    for i, message in ipairs(messages) do
+        -- Set duration for each message, defaulting to 3 seconds if not provided
+        local duration = durations[i] or 3
+        local imageUrl = images[i] or ""  -- Default to empty if no image provided
+        createNotification(message, duration, imageUrl)
+        wait(0.5)  -- Small delay between notifications
+    end
+end
+
+-- Example usage with multiple messages, durations, and images
+local exampleMessages = {
+    "Welcome to the game! Enjoy your stay.",
+    "Market prices have fluctuated significantly.",
+    "You have received a warning for unsatisfactory behavior.",
+    "New items are available in the shop!"
+}
+
+local exampleDurations = {
+    4,  -- Duration for the first notification
+    3,  -- Duration for the second notification
+    5,  -- Duration for the third notification
+    4   -- Duration for the fourth notification
+}
+
+local exampleImages = {
+    "rbxassetid://1234567890",  -- Replace with actual image asset IDs
+    "rbxassetid://1234567891",
+    "rbxassetid://1234567892",
+    "rbxassetid://1234567893"
+}
+
+-- Call the displayNotifications function with example messages, durations, and images
+displayNotifications(exampleMessages, exampleDurations, exampleImages)
