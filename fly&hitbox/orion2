@@ -1,0 +1,151 @@
+-- Load the Orion Library
+local OrionLib = loadstring(game:HttpGet("https://raw.githubusercontent.com/shlexware/Orion/main/source"))()
+
+-- Create a window
+local Window = OrionLib:MakeWindow({
+    Name = "Fly & Hitbox Expander - Orion Library",
+    HidePremium = false,
+    SaveConfig = true,
+    ConfigFolder = "FlyHitboxConfig"
+})
+
+-- Main tab for controls
+local MainTab = Window:MakeTab({
+    Name = "Fly & Hitbox",
+    Icon = "rbxassetid://4483345998",
+    PremiumOnly = false
+})
+
+-- Variables for fly and hitbox logic
+local plr = game.Players.LocalPlayer
+local torso = plr.Character:WaitForChild("HumanoidRootPart")
+local flying = false
+local flySpeed = 50
+local maxFlySpeed = 100
+local ctrl = {f = 0, b = 0, l = 0, r = 0}
+local hitboxSizeVar = Vector3.new(1.5, 1.5, 1.5)
+
+-- TextBox for Fly Speed
+MainTab:AddTextbox({
+    Name = "Fly Speed",
+    Default = "50",
+    TextDisappear = true,
+    Callback = function(value)
+        flySpeed = tonumber(value) or 50
+    end
+})
+
+-- TextBox for Hitbox Size
+MainTab:AddTextbox({
+    Name = "Hitbox Size (default: 1.5)",
+    Default = "1.5",
+    TextDisappear = true,
+    Callback = function(value)
+        local size = tonumber(value) or 1.5
+        hitboxSizeVar = Vector3.new(size, size, size)
+    end
+})
+
+-- Toggle for Fly
+MainTab:AddToggle({
+    Name = "Toggle Fly",
+    Default = false,
+    Callback = function(value)
+        flying = value
+        if flying then
+            startFlying()
+        else
+            stopFlying()
+        end
+    end
+})
+
+-- Mobile Controls
+local function createButtonControl(name, action)
+    MainTab:AddButton({
+        Name = name,
+        Callback = action
+    })
+end
+
+-- Mobile control buttons
+createButtonControl("Forward", function() ctrl.f = 1 end)
+createButtonControl("Backward", function() ctrl.b = -1 end)
+createButtonControl("Left", function() ctrl.l = -1 end)
+createButtonControl("Right", function() ctrl.r = 1 end)
+
+-- Fly Logic
+function startFlying()
+    local bg = Instance.new("BodyGyro", torso)
+    bg.P = 9e4
+    bg.maxTorque = Vector3.new(9e9, 9e9, 9e9)
+    bg.cframe = torso.CFrame
+    local bv = Instance.new("BodyVelocity", torso)
+    bv.velocity = Vector3.new(0, 0.1, 0)
+    bv.maxForce = Vector3.new(9e9, 9e9, 9e9)
+
+    plr.Character.Humanoid.PlatformStand = true
+
+    game:GetService("RunService").Heartbeat:Connect(function()
+        if flying then
+            bv.velocity = ((workspace.CurrentCamera.CFrame.lookVector * (ctrl.f + ctrl.b))
+                + ((workspace.CurrentCamera.CFrame * CFrame.new(ctrl.l + ctrl.r, (ctrl.f + ctrl.b) * .2, 0).p)
+                - workspace.CurrentCamera.CFrame.p)) * flySpeed
+            bg.cframe = workspace.CurrentCamera.CFrame * CFrame.Angles(-math.rad((ctrl.f + ctrl.b) * 50 * flySpeed / maxFlySpeed), 0, 0)
+        else
+            stopFlying()
+        end
+    end)
+end
+
+function stopFlying()
+    for _, v in pairs(torso:GetChildren()) do
+        if v:IsA("BodyGyro") or v:IsA("BodyVelocity") then
+            v:Destroy()
+        end
+    end
+    plr.Character.Humanoid.PlatformStand = false
+    flying = false
+end
+
+-- Hitbox Expander Logic
+local function getPlayersName()
+    for _, v in pairs(game:GetChildren()) do
+        if v.ClassName == "Players" then
+            return v.Name
+        end
+    end
+end
+
+local players = getPlayersName()
+local plr = game[players].LocalPlayer
+
+coroutine.resume(coroutine.create(function()
+    while wait(1) do
+        coroutine.resume(coroutine.create(function()
+            for _, v in pairs(game[players]:GetPlayers()) do
+                if v.Name ~= plr.Name and v.Character then
+                    v.Character.RightUpperLeg.CanCollide = false
+                    v.Character.RightUpperLeg.Transparency = 0.8
+                    v.Character.RightUpperLeg.Size = hitboxSizeVar
+
+                    v.Character.LeftUpperLeg.CanCollide = false
+                    v.Character.LeftUpperLeg.Transparency = 0.8
+                    v.Character.LeftUpperLeg.Size = hitboxSizeVar
+
+                    if v.Character:FindFirstChild("HeadHB") then
+                        v.Character.HeadHB.CanCollide = false
+                        v.Character.HeadHB.Transparency = 0.8
+                        v.Character.HeadHB.Size = hitboxSizeVar
+                    end
+
+                    v.Character.HumanoidRootPart.CanCollide = false
+                    v.Character.HumanoidRootPart.Transparency = 0.8
+                    v.Character.HumanoidRootPart.Size = hitboxSizeVar
+                end
+            end
+        end))
+    end
+end))
+
+OrionLib:Init()
