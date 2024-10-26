@@ -1,4 +1,4 @@
-local KavoUI = loadstring(game:HttpGet("https://raw.githubusercontent.com/DenDenZZZ/Kavo-UI-Library/main/Kavo.lua"))()
+local Kavo = loadstring(game:HttpGet("https://raw.githubusercontent.com/DenDenZZZ/Kavo-UI-Library/main/Kavo.lua"))()
 
 local Window = KavoUI:CreateWindow("Fly & Hitbox Expander - Kavo UI")
 local MainTab = Window:CreateTab("Fly & Hitbox", "rbxassetid://4483345998")
