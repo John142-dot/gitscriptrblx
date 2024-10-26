@@ -75,9 +75,9 @@ Tab:AddButton({
 })
 
 Tab:AddButton({
-    Name = "Un High JumpPower",
+    Name = "Placeholder for next script",
     Callback = function()
-        loadstring(game:HttpGet("
+        print(" Placeholder! ")
     end    
 })
 
