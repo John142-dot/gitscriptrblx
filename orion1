@@ -81,6 +81,13 @@ AnimationTab:AddButton({
     end,
 })
 
+Tab:AddButton({
+    Name = "Back to Sylurgen",
+    Callback = function()
+        loadstring(game:HttpGet("https://raw.githubusercontent.com/John142-dot/gitscriptrblx/refs/heads/main/Sylurgen.txt",true))()
+    end    
+})
+
 -- Initialize the UI
 OrionLib:Init()
 
