@@ -1,0 +1,88 @@
+-- Load the Orion Library
+local OrionLib = loadstring(game:HttpGet('https://raw.githubusercontent.com/shlexware/Orion/main/source'))()
+
+-- Get the local player
+local plr = game.Players.LocalPlayer
+
+-- Create a new window using Orion
+local Window = OrionLib:MakeWindow({
+    Name = "Stylized Female Animations",
+    HidePremium = false,
+})
+
+-- Ensure the character has the Animate object
+if not plr.Character or not plr.Character:FindFirstChild("Animate") then
+    warn("Character or Animate object not found.")
+    return
+end
+
+local Animate = plr.Character.Animate
+
+-- Create a new tab for animations
+local AnimationTab = Window:MakeTab({
+    Name = "Animations",
+    Icon = "rbxassetid://4483345998", -- You can change the icon ID
+    Premium = false,
+})
+
+-- Function to apply the first set of animations
+local function ApplyFirstSet()
+    Animate.Disabled = true
+
+    Animate.idle.Animation1.AnimationId = "http://www.roblox.com/asset/?id=4708191566" -- Stylized Idle
+    Animate.idle.Animation2.AnimationId = "http://www.roblox.com/asset/?id=4708192150" -- Stylized Idle 2
+    Animate.walk.WalkAnim.AnimationId = "http://www.roblox.com/asset/?id=4708193840" -- Stylized Walk
+    Animate.run.RunAnim.AnimationId = "http://www.roblox.com/asset/?id=4708192705" -- Stylized Run
+    Animate.jump.JumpAnim.AnimationId = "http://www.roblox.com/asset/?id=616161997" -- Stylized Jump
+    Animate.climb.ClimbAnim.AnimationId = "http://www.roblox.com/asset/?id=616156119" -- Stylized Climb
+    Animate.fall.FallAnim.AnimationId = "http://www.roblox.com/asset/?id=616157476" -- Stylized Fall
+    
+    Animate.Disabled = false
+    OrionLib:MakeNotification({
+        Name = "Animations Applied",
+        Content = "Stylized Female animations have been applied!",
+        Duration = 5,
+    })
+end
+
+-- Function to apply the second set of animations
+local function ApplySecondSet()
+    Animate.Disabled = true
+
+    Animate.idle.Animation1.AnimationId = "http://www.roblox.com/asset/?id=3489171152" -- Another Idle
+    Animate.idle.Animation2.AnimationId = "http://www.roblox.com/asset/?id=3489171152" -- Another Idle 2
+    Animate.walk.WalkAnim.AnimationId = "http://www.roblox.com/asset/?id=3489174223" -- Another Walk
+    Animate.run.RunAnim.AnimationId = "http://www.roblox.com/asset/?id=3489173414" -- Another Run
+    Animate.jump.JumpAnim.AnimationId = "http://www.roblox.com/asset/?id=616161997" -- Jump
+    Animate.climb.ClimbAnim.AnimationId = "http://www.roblox.com/asset/?id=616156119" -- Climb
+    Animate.fall.FallAnim.AnimationId = "http://www.roblox.com/asset/?id=616157476" -- Fall
+    
+    Animate.Disabled = false
+    OrionLib:MakeNotification({
+        Name = "Animations Applied",
+        Content = "Another set of animations has been applied!",
+        Duration = 5,
+    })
+end
+
+-- Create a button to apply the first set of animations
+AnimationTab:AddButton({
+    Name = "Apply Stylized Female Animations",
+    Callback = function()
+        ApplyFirstSet()
+    end,
+})
+
+-- Create a button to apply the second set of animations
+AnimationTab:AddButton({
+    Name = "Apply FE Zombie Animations",
+    Callback = function()
+        ApplySecondSet()
+    end,
+})
+
+-- Initialize the UI
+OrionLib:Init()
+
+-- This ensures the window is visible
+Window:Show()
