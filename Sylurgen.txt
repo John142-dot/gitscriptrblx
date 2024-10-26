@@ -24,7 +24,7 @@ OrionLib:MakeNotification({
 })
 
 local Window = OrionLib:MakeWindow({
-    Name = "L>U>L>U HUB", 
+    Name = "Sylurgen", 
     HidePremium = false, 
     SaveConfig = true, 
     ConfigFolder = "OrionTest"
@@ -46,7 +46,40 @@ local Section = Tab:AddSection({
     Name = "Fe Scripts"
 })
 
--- Removed flying functionality
+Tab:AddButton({
+    Name = "Fly & Hitbox Expand",
+    Callback = function()
+        loadstring(game:HttpGet("https://raw.githubusercontent.com/John142-dot/gitscriptrblx/refs/heads/main/fly%26hitbox/orion2"))()
+    end    
+})
+
+Tab:AddButton({
+    Name = "Player Animation",
+    Callback = function()
+        loadstring(game:HttpGet("https://raw.githubusercontent.com/John142-dot/gitscriptrblx/refs/heads/main/orion1"))()
+    end    
+})
+
+Tab:AddButton({
+    Name = "ESP",
+    Callback = function()
+        loadstring(game:HttpGet("https://raw.githubusercontent.com/John142-dot/gitscriptrblx/refs/heads/main/orionESP"))()
+    end    
+})
+
+Tab:AddButton({
+    Name = "Aimbot toggle",
+    Callback = function()
+        loadstring(game:HttpGet("https://raw.githubusercontent.com/John142-dot/gitscriptrblx/refs/heads/main/aimbottoggle"))()
+    end    
+})
+
+Tab:AddButton({
+    Name = "Un High JumpPower",
+    Callback = function()
+        loadstring(game:HttpGet("
+    end    
+})
 
 Tab:AddButton({
     Name = "High JumpPower",
